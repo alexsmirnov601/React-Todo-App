@@ -1,16 +1,25 @@
 // в этом комопненете мы отображаем добавленные задачи в интерфейсе
 // мы выполняем итерацию по массиву строк
 
-import Todo from './Todo';
-import styles from './TodoList.module.css';
+import Todo from './Todo'
+import styles from './TodoList.module.css'
 
 // todos - это массив, который мы получаем через св-во
-function TodoList({ todos, deleteTodo, toggleTodo }) {
+function TodoList({
+  todos,
+  deleteTodo,
+  toggleTodo,
+  editTodo,
+  editHandler,
+  mainEditHandler,
+}) {
   return (
     <div className={styles.todoListContainer}>
       {!todos.length && <h2>Todo list is empty</h2>}
       {todos.map((todo) => (
         <Todo
+          mainEditHandler={mainEditHandler}
+          editHandler={editHandler}
           key={todo.id}
           todo={todo}
           deleteTodo={deleteTodo}
@@ -18,7 +27,7 @@ function TodoList({ todos, deleteTodo, toggleTodo }) {
         />
       ))}
     </div>
-  );
+  )
 }
 
-export default TodoList;
+export default TodoList

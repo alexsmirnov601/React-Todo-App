@@ -1,54 +1,82 @@
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'; // импорт генерации уникальных id
-import './App.css';
-import TodoForm from './components/Todos/TodoForm';
-import TodoList from './components/Todos/TodoList';
-import TodosActions from './components/Todos/TodosActions';
+import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid' // импорт генерации уникальных id
+import './App.css'
+import TodoForm from './components/Todos/TodoForm'
+import TodoList from './components/Todos/TodoList'
+import TodosActions from './components/Todos/TodosActions'
 
 function App() {
-  //1) todos - это массив объектов
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState([])
 
-  /*2) эта функция нужна для того, чтобы добавлять новые задачи в массив задач,
-  эту функцию мы передаем в качестве св-ва addTodo в компонент  TodoForm, и поэтому внутри
-  компонента TodoForm у нас появляется возможность вызыва функции addTodo при submit формы  
+  /* 1) в этой версии приложения, todos как массив строк нам не подойдет, потому что теперь для 
+  каждой задачи todo у нас пояится своё состояние (состояние, которое указывает на то, завершена ли
+    задача), следовательно информацию о том завершена задачи или нет нам следует хранить рядом с текстом 
+    задачи поэтому логично преобразовать строку в объект 
   */
+
   const addTodoHandler = (text) => {
     const newTodo = {
       text: text,
       isCompleted: false,
+      isEdit: false,
       id: uuidv4(), // уникальный id
-    };
-    setTodos([...todos, newTodo]);
-  };
+    }
+    setTodos([...todos, newTodo])
+  }
   // удаление задач из списка
-  const deleteTodoHandler = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
+  // не рекомендуется использовать indx, лучше использовать отдельный сгенирированный id
 
-  // изменение состояние задачи
+  const deleteTodoHandler = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id))
+  }
+
+  // меняет значение isCompleted в объекте newTodo
   const toggleTodoHandler = (id) => {
+    setTodos(
+      todos.map(
+        (todo) =>
+          todo.id === id
+            ? { ...todo, isCompleted: !todo.isCompleted }
+            : {
+                ...todo,
+              } /* по правилам реакт мы должны создавать новое состояние, каждый раз при ререндеринге компонента, поэтому лучше записать так (мы создаем новый объект) */
+      )
+    )
+  }
+
+  // меняет значение isEdit
+  const editHandler = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, isEdit: !todo.isEdit } : { ...todo }
+      )
+    )
+  }
+
+  // добавляет отредакитированный todo и  меняет значение isEdit
+  const mainEditHandler = (text, id) => {
     setTodos(
       todos.map((todo) =>
         todo.id === id
-          ? { ...todo, isCompleted: !todo.isCompleted }
+          ? { ...todo, text: text, isEdit: !todo.isEdit }
           : { ...todo }
       )
-    );
-  };
+    )
+  }
 
   // полностью отчищаем приложение и удаляем все задачи
   const resetTodosHandler = () => {
-    setTodos([]);
-  };
+    setTodos([])
+  }
 
   // удаляет только выполенные задачи
+  // мы хотим оставить все задачи, у которых isCompleted: false
   const deleteCompletedTodosHandler = () => {
-    setTodos(todos.filter((todo) => !todo.isCompleted));
-  };
+    setTodos(todos.filter((todo) => !todo.isCompleted))
+  }
 
   // счетчик завершенных задач
-  const completedTodosCount = todos.filter((todo) => todo.isCompleted).length;
+  const completedTodosCount = todos.filter((todo) => todo.isCompleted).length
 
   return (
     <div className="App">
@@ -61,7 +89,10 @@ function App() {
           deleteCompletedTodos={deleteCompletedTodosHandler}
         />
       )}
+
       <TodoList
+        mainEditHandler={mainEditHandler}
+        editHandler={editHandler}
         todos={todos}
         deleteTodo={deleteTodoHandler}
         toggleTodo={toggleTodoHandler}
@@ -72,7 +103,7 @@ function App() {
         }`}</h2>
       )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

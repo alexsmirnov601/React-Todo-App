@@ -1,22 +1,25 @@
 // В этом компоненте мы добавляем новые задачи
 
-import { useState } from 'react';
-import styles from './TodoForm.module.css';
-import Button from '../UI/Button';
+import { useState } from 'react'
+import styles from './TodoForm.module.css'
+import Button from '../UI/Button'
 
 function TodoForm({ addTodo }) {
   // делаем форму контролируемой
-  const [text, setText] = useState(['']);
+  const [text, setText] = useState([''])
 
   function handleFormSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    if (text.length === 0) {
-      return null;
-    }
+    // функция отключает возможность добавления пустого Todo
+    // if (text.length === 0) {
+    //   return null
+    // }
 
-    addTodo(text); // для изменения состояния в компоненте  App, добавив новую задачу в массив задач
-    setText(''); // отчищаем поле ввода после submit`
+    /*  вместо функции выше, можно просто добавить это св-во в Button disabled={!text.length} */
+
+    addTodo(text) // для изменения состояния в компоненте  App, добавив новую задачу в массив задач
+    setText('') // отчищаем поле ввода после submit`
     // вызывая функцию addTodo, мы вызываем функцию addTodoHandler из компонента App
   }
 
@@ -34,12 +37,12 @@ function TodoForm({ addTodo }) {
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter new todo"
         />
-        <Button type="submit" title="submit">
+        <Button disabled={!text.length} type="submit" title="submit">
           Submit
         </Button>
       </form>
     </div>
-  );
+  )
 }
 
-export default TodoForm;
+export default TodoForm
